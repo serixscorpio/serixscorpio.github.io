@@ -1,0 +1,14 @@
+baseurl: null
+
+assets:
+  baseurl: /assets/
+  cachebust: none
+  cache: false
+  compress:
+    css: null
+    js: null
+
+cdn_enabled: false
+
+google_analytics: false
+piwik: false
