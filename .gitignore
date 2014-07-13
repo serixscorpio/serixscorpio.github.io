@@ -3,3 +3,6 @@
 Gemfile.lock
 _site/
 bower_components/
+.bundle/
+_drafts/
+_drafts

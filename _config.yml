@@ -1,5 +1,5 @@
 # Jekyll options.
-name: Site Name
+name: Random Walks in Gems
 domain: http://razor-x.github.io/jekyll-and-zurb
 baseurl: http://razor-x.github.io/jekyll-and-zurb
 markdown: redcarpet
