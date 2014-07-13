@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<html class="no-js" lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+
+
+  <title>Ruby Splat Operator</title>
+  <meta property="og:title" content="Ruby Splat Operator" />
+
+
+
+  
+
+
+
+  <meta name="description" content="In Figaro&#39;s env.rb, the method_missing method has * as part of its arguments:
+" />
+  <meta property="og:description" content="In Figaro&#39;s env.rb, the method_missing method has * as part of its arguments:
+" />
+
+
+<link rel="canonical" href="http://razor-x.github.io/jekyll-and-zurb/2014/07/13/splat-operator.html" />
+<meta property="og:url" content="http://razor-x.github.io/jekyll-and-zurb/2014/07/13/splat-operator.html" />
+<meta property="og:site_name" content="Random Walks in Gems" />
+
+<meta property="og:updated_time" content="2014-07-13T00:00:00+00:00" />
+
+
+
+
+
+
+  <meta property="keywords" content="blog,personal" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link type="text/plain" rel="author" href="humans.txt" />
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.0/webfont.js"></script>
+  <link rel="stylesheet" href="http://razor-x.github.io/jekyll-and-zurb/assets/app-7a6ed464d1be53d979e1b986b1c69dc9.css">
+  <script>(function(){"use strict";WebFont.load({google:{families:["Open+Sans:400,300,300italic,400italic,600,700,600italic,700italic,800,800italic:latin,latin-ext","Inconsolata:400,700"]}})}).call(this);</script>
+  <script src="http://razor-x.github.io/jekyll-and-zurb/assets/head-8e6ae2f2c2c9b93d4cd0abe216523d78.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1><a href="http://razor-x.github.io/jekyll-and-zurb/">Random Walks in Gems</a></h1>
+  </header>
+
+  <article>
+  <header>
+    <h1>Ruby Splat Operator</h1>
+    <p>13 Jul 2014</p>
+  </header>
+
+  <p>In Figaro&#39;s <a href="https://github.com/laserlemon/figaro/blob/master/lib/figaro/env.rb">env.rb</a>, the <code>method_missing</code> method has <code>*</code> as part of its arguments:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">method_missing</span><span class="p">(</span><span class="nb">method</span><span class="p">,</span> <span class="o">*</span><span class="p">)</span> 
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>The <code>*</code> is known as a splat operator, which allows a method to take a variable number of arguments.  Let&#39;s try it out in irb:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="o">&gt;</span>   <span class="n">args</span>
+<span class="o">&gt;</span> <span class="k">end</span>
+<span class="o">&gt;</span> <span class="n">foo</span>
+<span class="o">=&gt;</span> <span class="o">[]</span>
+<span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;hello&quot;</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="ss">:world</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="ss">:world</span><span class="o">]</span>
+</code></pre></div>
+<p>The above example uses the splat operator with a variable name <code>*args</code>.  We can also use <code>*</code> without a variable name:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="o">&gt;</span>   <span class="c1"># do nothing</span>
+<span class="o">&gt;</span> <span class="k">end</span>
+<span class="o">&gt;</span> <span class="n">bar</span>
+<span class="o">=&gt;</span> <span class="kp">nil</span>
+<span class="o">&gt;</span> <span class="n">bar</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="kp">nil</span>
+<span class="o">&gt;</span> <span class="n">bar</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="ss">:world</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="kp">nil</span>
+</code></pre></div>
+<p>Hmm... but that doesn&#39;t seem useful to have <code>*</code> without a variable name, since the <code>bar</code> method can no longer access the arguments.  How come Figaro uses the splat operator this way?  A <a href="http://stackoverflow.com/questions/17984476/what-does-a-splat-operator-do-when-it-has-no-variable-name">search</a> shows that using <code>*</code> by itself prevents the current method from accessing the arguments, but allows the corresponding method in the superclass to access the arguments.  To illustrate:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Parent</span>
+<span class="o">&gt;</span>   <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="o">&gt;</span>     <span class="n">args</span>
+<span class="o">&gt;</span>   <span class="k">end</span>
+<span class="o">&gt;</span> <span class="k">end</span>
+<span class="o">&gt;</span>
+<span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Child</span> <span class="o">&lt;</span> <span class="no">Parent</span>
+<span class="o">&gt;</span>   <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="o">&gt;</span>     <span class="k">super</span>
+<span class="o">&gt;</span>   <span class="k">end</span>
+<span class="o">&gt;</span> <span class="k">end</span>
+<span class="o">&gt;</span>
+<span class="o">&gt;</span> <span class="n">child</span> <span class="o">=</span> <span class="no">Child</span><span class="o">.</span><span class="n">new</span>
+<span class="o">&gt;</span> <span class="n">child</span><span class="o">.</span><span class="n">baz</span>
+<span class="o">=&gt;</span> <span class="o">[]</span>
+<span class="o">&gt;</span> <span class="n">child</span><span class="o">.</span><span class="n">baz</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;hello&quot;</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">child</span><span class="o">.</span><span class="n">baz</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="ss">:world</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="ss">:world</span><span class="o">]</span>
+</code></pre></div>
+<p>In <code>Child</code>, <code>baz</code> can&#39;t access <code>&#39;hello&#39;</code>, but in <code>Parent</code>, <code>baz</code> can.  Using <code>*</code> without a variable name makes sure <code>Child</code> doesn&#39;t mess with the argument(s), but still allow <code>Parent</code> to process the argument(s).</p>
+
+<p>Coming back to Figaro&#39;s <a href="https://github.com/laserlemon/figaro/blob/master/lib/figaro/env.rb">env.rb</a>, <code>method_missing(method, *)</code> is saying it doesn&#39;t mess with the argument(s), but makes them available to <code>method_missing</code> in  <a href="http://www.ruby-doc.org/core-2.1.2/BasicObject.html#method-i-method_missing">BasicObject</a>, which is the superclass.  Hopefully next time I see a splat operator, it won&#39;t be a stranger!</p>
+
+
+  
+</article>
+
+
+  <footer>
+    
+
+    <p><a href="http://www.w3.org/html/logo/"><img src="http://razor-x.github.io/jekyll-and-zurb/assets/html5-badge-h-css3-semantics-a3232d2444bb349a759c6528342f4592.png" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics" width="165" height="64" /></a></p>
+  </footer>
+
+
+
+
+  <script>    'use strict';    yepnope([          {        load: 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',        complete: function () {          if ( !window.jQuery ) {            yepnope('http://razor-x.github.io/jekyll-and-zurb/assets/jquery/dist/jquery-a419ddee9e7084263649c0138e29f157.js');          }        }      },          'http://razor-x.github.io/jekyll-and-zurb/assets/app-27d5dd4dd1398b068514bca8fbce1aab.js'    ]);              </script>
+</body>
+</html>
