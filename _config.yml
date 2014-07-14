@@ -1,7 +1,7 @@
 # Jekyll options.
 name: Random Walks in Gems
-domain: http://razor-x.github.io/jekyll-and-zurb
-baseurl: http://razor-x.github.io/jekyll-and-zurb
+domain: http://serixscorpio.github.io
+baseurl: http://serixscorpio.github.io
 markdown: redcarpet
 highlighter: pygments
 
@@ -27,7 +27,7 @@ gems:
 
 # Jekyll::AssetsPlugin options.
 assets:
-  baseurl: http://razor-x.github.io/jekyll-and-zurb/assets/
+  baseurl: http://serixscorpio.github.io/assets/
   sources:
     - _assets/images
     - _assets/javascripts
