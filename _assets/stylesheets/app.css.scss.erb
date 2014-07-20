@@ -1,0 +1,47 @@
+//= require normalize-css/normalize.css
+//= require highlightjs/styles/default
+
+// Make sure the charset is set appropriately.
+@charset "UTF-8";
+
+//
+// Fonts
+//
+@import "fonts";
+
+// Global Foundation Settings
+@import "settings";
+
+// Import Foundation
+@import "foundation/scss/foundation";
+
+// Load this when using social buttons.
+<%= '@import "social-buttons"' if site.config['social'] %>
+
+.hero {
+  text-align: center;
+  height: 40%;
+}
+
+.hero:before {
+  content: '';
+  display: inline-block;
+  height: 40%;
+  vertical-align: middle;
+}
+
+.centered {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.postItem {
+  border-color: 0,0,0,0.2;
+  border-bottom: 1px solid;
+  padding: 20px;
+}
+
+.postItem-title {
+  margin-bottom: 8px;
+  margin-top: 4px;
+}
