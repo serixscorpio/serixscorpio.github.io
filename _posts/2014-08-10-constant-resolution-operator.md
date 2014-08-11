@@ -1,5 +1,7 @@
-
-## Ruby Constant Resolution Operator (::)
+---
+layout: post
+title: Ruby Constant Resolution Operator (::)
+---
 I came across `::ENV` and `ENV` when I was reading the Figaro gem.  I was not able to articulate the difference between the two, so I set out to find more about the constant resolution operator (::).  Hopefully this will be useful for others as well.
 
 Let's play around with it in irb (or alternatively, pry), to get a feel of what we are dealing with:
