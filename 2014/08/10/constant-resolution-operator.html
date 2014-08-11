@@ -1,6 +1,75 @@
-<h2>Ruby Constant Resolution Operator (::)</h2>
+<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<html class="no-js" lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
 
-<p>I came across <code>::ENV</code> and <code>ENV</code> when I was reading the Figaro gem.  I was not able to articulate the difference between the two, so I set out to find more about the constant resolution operator (::).  Hopefully this will be useful for others as well.</p>
+
+  <title>Ruby Constant Resolution Operator (::)</title>
+  <meta property="og:title" content="Ruby Constant Resolution Operator (::)" />
+
+
+
+  
+
+
+
+  <meta name="description" content="I came across ::ENV and ENV when I was reading the Figaro gem.  I was not able to articulate the difference between the two, so I set out to find more about the constant resolution operator (::).  Hopefully this will be useful for others as well.
+" />
+  <meta property="og:description" content="I came across ::ENV and ENV when I was reading the Figaro gem.  I was not able to articulate the difference between the two, so I set out to find more about the constant resolution operator (::).  Hopefully this will be useful for others as well.
+" />
+
+
+<link rel="canonical" href="http://serixscorpio.github.io/2014/08/10/constant-resolution-operator.html" />
+<meta property="og:url" content="http://serixscorpio.github.io/2014/08/10/constant-resolution-operator.html" />
+<meta property="og:site_name" content="Random Walks in Gems" />
+
+<meta property="og:updated_time" content="2014-08-10T00:00:00+00:00" />
+
+
+
+
+
+
+  <meta property="keywords" content="blog,personal" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link type="text/plain" rel="author" href="humans.txt" />
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.0/webfont.js"></script>
+  <link rel="stylesheet" href="http://serixscorpio.github.io/assets/app-b03a128dc9c29006ca25e435f5fc25b9.css">
+  <script>(function(){"use strict";WebFont.load({google:{families:["Ubuntu"]}})}).call(this);</script>
+  <script src="http://serixscorpio.github.io/assets/head-20ade4d99b635d94e5ec57b12ffc9c92.js"></script>
+</head>
+
+<body>
+
+  <article>
+  <header class="hero">
+    <h1>Ruby Constant Resolution Operator (::)</h1>
+    <p>10 Aug 2014</p>
+  </header>
+
+  <div class="container">
+    <div class="row section-content">
+      <div class="large-10 large-offset-1 columns">
+        <p>I came across <code>::ENV</code> and <code>ENV</code> when I was reading the Figaro gem.  I was not able to articulate the difference between the two, so I set out to find more about the constant resolution operator (::).  Hopefully this will be useful for others as well.</p>
 
 <p>Let&#39;s play around with it in irb (or alternatively, pry), to get a feel of what we are dealing with:
 <code>
@@ -92,3 +161,23 @@ from (pry):14:in `envvar&#39;
 </code>
 Here, <code>ENV</code> resolves to <code>MyModule::ENV</code>, which does not know about the <code>fetch</code> method.  How come <code>ENV</code> does not resolve to the built-in Ruby <code>ENV</code> class?  Based on <a href="http://stackoverflow.com/questions/5032844/ruby-what-does-prefix-do">Stackoverflow Q&amp;A</a>, 
 the prefix <code>::</code> refers to the global scope, so <code>::ENV</code> resolves to the build-in Ruby <code>ENV</code> class.  Without the prefix, <code>ENV</code> resolves to <code>MyModule::ENV</code> because when Ruby tries to resolve a constant, it begins searching within the current module or class, and continues searching the enclosing scope.  (For more details, check out <a href="http://valve.github.io/blog/2013/10/26/constant-resolution-in-ruby/">@valve&#39;s article</a>)</p>
+
+
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+
+  <footer>
+    
+
+  </footer>
+
+
+
+
+  <script>    'use strict';    yepnope([          {        load: 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',        complete: function () {          if ( !window.jQuery ) {            yepnope('http://serixscorpio.github.io/assets/jquery/dist/jquery-fc13c39852cdf78bcdc4828979ea36d2.js');          }        }      },          'http://serixscorpio.github.io/assets/app-c98f6bcc94867897539baf456375fdab.js'    ]);              </script>
+</body>
+</html>
