@@ -71,9 +71,8 @@
       <div class="large-10 large-offset-1 columns">
         <p>I came across <code>::ENV</code> and <code>ENV</code> when I was reading the Figaro gem.  I was not able to articulate the difference between the two, so I set out to find more about the constant resolution operator (::).  Hopefully this will be useful for others as well.</p>
 
-<p>Let&#39;s play around with it in irb (or alternatively, pry), to get a feel of what we are dealing with:
-<code>
-[1] pry(main)&gt; ENV
+<p>Let&#39;s play around with it in irb (or alternatively, pry), to get a feel of what we are dealing with:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">[1] pry(main)&gt; ENV
 =&gt; {&quot;CLUTTER_IM_MODULE&quot;=&gt;&quot;xim&quot;,
  &quot;COLUMNS&quot;=&gt;&quot;119&quot;,
  &quot;DBUS_SESSION_BUS_ADDRESS&quot;=&gt;&quot;unix:abstract=/tmp/dbus-o7ga8nDMeL&quot;,
@@ -83,10 +82,9 @@
  &quot;ZSH&quot;=&gt;&quot;/home/eric/.oh-my-zsh&quot;,
  &quot;_LXSESSION_PID&quot;=&gt;&quot;1689&quot;}
 [2] pry(main)&gt; 
-</code>
-It looks like <code>ENV</code> has all of my environment variables already.  So I suspect this is built into Ruby already.  Indeed, this is the <a href="http://www.ruby-doc.org/core-2.1.2/ENV.html">ENV class documentation</a>.  Then I tried:
-<code>
-[2] pry(main)&gt; ::ENV
+</code></pre></div>
+<p>It looks like <code>ENV</code> has all of my environment variables already.  So I suspect this is built into Ruby already.  Indeed, this is the <a href="http://www.ruby-doc.org/core-2.1.2/ENV.html">ENV class documentation</a>.  Then I tried:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">[2] pry(main)&gt; ::ENV
 =&gt; {&quot;CLUTTER_IM_MODULE&quot;=&gt;&quot;xim&quot;,
  &quot;COLUMNS&quot;=&gt;&quot;119&quot;,
  &quot;DBUS_SESSION_BUS_ADDRESS&quot;=&gt;&quot;unix:abstract=/tmp/dbus-o7ga8nDMeL&quot;,
@@ -96,14 +94,13 @@ It looks like <code>ENV</code> has all of my environment variables already.  So 
  &quot;ZSH&quot;=&gt;&quot;/home/eric/.oh-my-zsh&quot;,
  &quot;_LXSESSION_PID&quot;=&gt;&quot;1689&quot;}
 [3] pry(main)&gt;
-</code>
-It seems like we are getting the same output for both <code>ENV</code> and <code>::ENV</code>.  What does the <code>::</code> do?  The clearest explanation I can find is an excerpt from Dave Thomas and Andy Hunt&#39;s <a href="http://ruby-doc.com/docs/ProgrammingRuby/">Programming Ruby - The Pragmatic Programmer&#39;s Guide</a> -&gt; The Ruby Language (section) -&gt; Scope of Constants and Variables (sub-section):</p>
+</code></pre></div>
+<p>It seems like we are getting the same output for both <code>ENV</code> and <code>::ENV</code>.  What does the <code>::</code> do?  The clearest explanation I can find is an excerpt from Dave Thomas and Andy Hunt&#39;s <a href="http://ruby-doc.com/docs/ProgrammingRuby/">Programming Ruby - The Pragmatic Programmer&#39;s Guide</a> -&gt; The Ruby Language (section) -&gt; Scope of Constants and Variables (sub-section):</p>
 
 <p><strong>&quot;Constants defined outside any class or module may be accessed unadorned or by using the scope operator <code>::</code> with no prefix.&quot;</strong></p>
 
-<p>But wait, we just confirmed that <code>ENV</code> is a Ruby core class.  Is it also a constant? Yes, in Ruby, <a href="http://rubylearning.com/satishtalim/ruby_names.html">class names and module names are constants</a>.   Let&#39;s confirm that:
-<code>
-[3] pry(main)&gt; Object.constants
+<p>But wait, we just confirmed that <code>ENV</code> is a Ruby core class.  Is it also a constant? Yes, in Ruby, <a href="http://rubylearning.com/satishtalim/ruby_names.html">class names and module names are constants</a>.   Let&#39;s confirm that:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">[3] pry(main)&gt; Object.constants
 =&gt; [:Object,
  :Module,
  :Class,
@@ -112,12 +109,11 @@ It seems like we are getting the same output for both <code>ENV</code> and <code
  ...
  :RUBYGEMS_ACTIVATION_MONITOR]
 [4] pry(main)&gt; 
-</code>
-<code>ENV</code> is indeed one of <code>Object</code>&#39;s constants.</p>
+</code></pre></div>
+<p><code>ENV</code> is indeed one of <code>Object</code>&#39;s constants.</p>
 
-<p>So far, we still have not figured out why the Figaro gem uses <a href="https://github.com/laserlemon/figaro/blob/master/lib/figaro/env.rb#L33"><code>::ENV</code></a> instead of <code>ENV</code> to access the Ruby built-in <code>ENV</code> class:
-<code>
-module Figaro
+<p>So far, we still have not figured out why the Figaro gem uses <a href="https://github.com/laserlemon/figaro/blob/master/lib/figaro/env.rb#L33"><code>::ENV</code></a> instead of <code>ENV</code> to access the Ruby built-in <code>ENV</code> class:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">module Figaro
   module ENV
     extend self
     # ...
@@ -127,10 +123,9 @@ module Figaro
     # ...
   end
 end
-</code>
-Could it be because Figaro also defines it&#39;s own module named <code>ENV</code>?  To test this out, let&#39;s use a custom made example:
-<code>
-[1] pry(main)&gt; module MyModule
+</code></pre></div>
+<p>Could it be because Figaro also defines it&#39;s own module named <code>ENV</code>?  To test this out, let&#39;s use a custom made example:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">[1] pry(main)&gt; module MyModule
 [1] pry(main)*   module ENV
 [1] pry(main)*     extend self
 [1] pry(main)*     def envvar(name)
@@ -142,10 +137,9 @@ Could it be because Figaro also defines it&#39;s own module named <code>ENV</cod
 [2] pry(main)&gt; MyModule::ENV.envvar(&quot;HOME&quot;)
 =&gt; &quot;/home/eric&quot;
 [3] pry(main)&gt;
-</code>
-<code>::ENV</code> from the above example is using Ruby&#39;s built-in class, which knows about the <a href="http://www.ruby-doc.org/core-2.1.2/ENV.html">fetch</a> method.  Now let&#39;s try:
-<code>
-[3] pry(main)&gt; module MyModule
+</code></pre></div>
+<p><code>::ENV</code> from the above example is using Ruby&#39;s built-in class, which knows about the <a href="http://www.ruby-doc.org/core-2.1.2/ENV.html">fetch</a> method.  Now let&#39;s try:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">[3] pry(main)&gt; module MyModule
 [3] pry(main)*   module ENV
 [3] pry(main)*     extend self
 [3] pry(main)*     def envvar(name)
@@ -158,8 +152,8 @@ Could it be because Figaro also defines it&#39;s own module named <code>ENV</cod
 NoMethodError: undefined method `fetch&#39; for MyModule::ENV:Module
 from (pry):14:in `envvar&#39;
 [5] pry(main)&gt; 
-</code>
-Here, <code>ENV</code> resolves to <code>MyModule::ENV</code>, which does not know about the <code>fetch</code> method.  How come <code>ENV</code> does not resolve to the built-in Ruby <code>ENV</code> class?  Based on <a href="http://stackoverflow.com/questions/5032844/ruby-what-does-prefix-do">Stackoverflow Q&amp;A</a>, 
+</code></pre></div>
+<p>Here, <code>ENV</code> resolves to <code>MyModule::ENV</code>, which does not know about the <code>fetch</code> method.  How come <code>ENV</code> does not resolve to the built-in Ruby <code>ENV</code> class?  Based on <a href="http://stackoverflow.com/questions/5032844/ruby-what-does-prefix-do">Stackoverflow Q&amp;A</a>, 
 the prefix <code>::</code> refers to the global scope, so <code>::ENV</code> resolves to the build-in Ruby <code>ENV</code> class.  Without the prefix, <code>ENV</code> resolves to <code>MyModule::ENV</code> because when Ruby tries to resolve a constant, it begins searching within the current module or class, and continues searching the enclosing scope.  (For more details, check out <a href="http://valve.github.io/blog/2013/10/26/constant-resolution-in-ruby/">@valve&#39;s article</a>)</p>
 
 
