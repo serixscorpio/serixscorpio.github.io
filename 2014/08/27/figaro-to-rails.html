@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<html class="no-js" lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+
+
+  <title>Figaro to Rails</title>
+  <meta property="og:title" content="Figaro to Rails" />
+
+
+
+  
+
+
+
+  <meta name="description" content="Figaro can be used within the context of Rails.  For the longest time I have taken it for granted that it &#39;just works&#39; without digging deeper into how various gems are made to work seamlessly with Rails.  This time, we will start exploring.  Figaro, an environment variable management tool, knows about the values defined in config/application.yml within a Rails application.  But how does Figaro know about the presence of this file in Rails?  What if I want to put my custom environment variables into a separate file instead of using config/application.yml?  How can that be accomplished?
+" />
+  <meta property="og:description" content="Figaro can be used within the context of Rails.  For the longest time I have taken it for granted that it &#39;just works&#39; without digging deeper into how various gems are made to work seamlessly with Rails.  This time, we will start exploring.  Figaro, an environment variable management tool, knows about the values defined in config/application.yml within a Rails application.  But how does Figaro know about the presence of this file in Rails?  What if I want to put my custom environment variables into a separate file instead of using config/application.yml?  How can that be accomplished?
+" />
+
+
+<link rel="canonical" href="http://serixscorpio.github.io/2014/08/27/figaro-to-rails.html" />
+<meta property="og:url" content="http://serixscorpio.github.io/2014/08/27/figaro-to-rails.html" />
+<meta property="og:site_name" content="Random Walks in Gems" />
+
+<meta property="og:updated_time" content="2014-08-27T00:00:00+00:00" />
+
+
+
+
+
+
+  <meta property="keywords" content="blog,personal" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link type="text/plain" rel="author" href="humans.txt" />
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.0/webfont.js"></script>
+  <link rel="stylesheet" href="http://serixscorpio.github.io/assets/app-b03a128dc9c29006ca25e435f5fc25b9.css">
+  <script>(function(){"use strict";WebFont.load({google:{families:["Ubuntu"]}})}).call(this);</script>
+  <script src="http://serixscorpio.github.io/assets/head-20ade4d99b635d94e5ec57b12ffc9c92.js"></script>
+</head>
+
+<body>
+
+  <article>
+  <header class="hero">
+    <h1>Figaro to Rails</h1>
+    <p>27 Aug 2014</p>
+  </header>
+
+  <div class="container">
+    <div class="row section-content">
+      <div class="large-10 large-offset-1 columns">
+        <p>Figaro can be used within the context of Rails.  For the longest time I have taken it for granted that it &#39;just works&#39; without digging deeper into how various gems are made to work seamlessly with Rails.  This time, we will start exploring.  Figaro, an environment variable management tool, knows about the values defined in <code>config/application.yml</code> within a Rails application.  But how does Figaro know about the presence of this file in Rails?  What if I want to put my custom environment variables into a separate file instead of using <code>config/application.yml</code>?  How can that be accomplished?</p>
+
+<p>To begin with, we look at <code>spec/rails_spec.rb</code> in Figaro.</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s2">&quot;spec_helper&quot;</span>
+
+<span class="n">describe</span> <span class="no">Figaro</span><span class="o">::</span><span class="no">Rails</span> <span class="k">do</span>
+  <span class="n">before</span> <span class="k">do</span>
+    <span class="n">run_simple</span><span class="p">(</span><span class="o">&lt;&lt;-</span><span class="no">CMD</span><span class="p">)</span>
+<span class="sh">      rails new example \</span>
+<span class="sh">        --skip-gemfile \</span>
+<span class="sh">        --skip-bundle \</span>
+<span class="sh">        --skip-keeps \</span>
+<span class="sh">        --skip-sprockets \</span>
+<span class="sh">        --skip-javascript \</span>
+<span class="sh">        --skip-test-unit \</span>
+<span class="sh">        --no-rc \</span>
+<span class="sh">        --quiet</span>
+<span class="no">      CMD</span>
+    <span class="n">cd</span><span class="p">(</span><span class="s2">&quot;example&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+    <span class="n">before</span> <span class="k">do</span>
+      <span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;config/application.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;foo: bar&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;loads application.yml&quot;</span> <span class="k">do</span>
+      <span class="n">run_simple</span><span class="p">(</span><span class="s2">&quot;rails runner &#39;puts Figaro.env.foo&#39;&quot;</span><span class="p">)</span>
+
+      <span class="n">assert_partial_output</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">all_stdout</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Notice that before each test, a new, barebone rails application called <code>example</code> is created.  Also, a <code>config/application.yml</code> is created with <code>foo: bar</code> in it.  The test executes <code>puts Figaro.env.foo</code> in rails and expects the output to contain <code>bar</code>.  <code>bar</code> would only appear on standard output (stdout) if the <code>application.yml</code> is somehow read and turns <code>foo</code> into an environment variable with value <code>bar</code>.</p>
+
+<p>Let us take a couple of steps back and consider why Rails understand <code>Figaro.env.foo</code>. At the top of <code>spec/rails_spec.rb</code>, we require <code>spec_helper</code>:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s2">&quot;bundler&quot;</span>
+<span class="no">Bundler</span><span class="o">.</span><span class="n">setup</span>
+
+<span class="k">if</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;COVERAGE&quot;</span><span class="o">]</span>
+  <span class="nb">require</span> <span class="s2">&quot;codeclimate-test-reporter&quot;</span>
+  <span class="no">CodeClimate</span><span class="o">::</span><span class="no">TestReporter</span><span class="o">.</span><span class="n">start</span>
+<span class="k">end</span>
+
+<span class="nb">require</span> <span class="s2">&quot;figaro&quot;</span>
+
+<span class="no">Bundler</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="ss">:test</span><span class="p">)</span>
+
+<span class="no">Dir</span><span class="o">[</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;../support/*.rb&quot;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span><span class="o">].</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="nb">require</span> <span class="n">f</span> <span class="p">}</span>
+</code></pre></div>
+<p>Notice the <code>require &quot;figaro&quot;</code>, which leads us to <code>lib/figaro.rb</code>:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s2">&quot;figaro/error&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;figaro/env&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;figaro/application&quot;</span>
+
+<span class="k">module</span> <span class="nn">Figaro</span>
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+<span class="k">end</span>
+
+<span class="nb">require</span> <span class="s2">&quot;figaro/rails&quot;</span>
+</code></pre></div>
+<p>This is the top level file that includes the core of the Figaro gem itself, but at the moment, we are more interested in the last line <code>require &quot;figaro/rails&quot;</code>.  Inside <code>figaro/rails</code>:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">begin</span>
+  <span class="nb">require</span> <span class="s2">&quot;rails&quot;</span>
+<span class="k">rescue</span> <span class="no">LoadError</span>
+<span class="k">else</span>
+  <span class="nb">require</span> <span class="s2">&quot;figaro/rails/application&quot;</span>
+  <span class="nb">require</span> <span class="s2">&quot;figaro/rails/railtie&quot;</span>
+
+  <span class="no">Figaro</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="no">Figaro</span><span class="o">::</span><span class="no">Rails</span><span class="o">::</span><span class="no">Application</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>We see <code>require &quot;rails&quot;</code>. This require will run successfully because the Gemfile of the Figaro codebase includes <code>rails</code>.  This is also why we can run <code>rails new &lt;application name&gt;</code> in <code>spec/rails_spec.rb</code>.  Then we move onto the <code>else</code> block.  Here, <code>figaro/rails/application</code> and <code>figaro/rails/railtie</code> are the primary integration point between Figaro and Rails.</p>
+
+<p><code>figaro/rails/application.rb</code> implements a subclass <code>Figaro::Rails::Application</code> which inherits from base class <code>Figaro::Application</code>.  The subclass provides implementation for <code>default_path</code> and <code>default_environment</code>.  In both methods, the implementation relies on the presence of <code>::Rails</code>.  The default path is derived as <code>&lt;rails root&gt;/config/application.yml</code>; the default environment is the current environment of the rails app.</p>
+
+<p><code>figaro/rails/railtie.rb</code> implements a subclass <code>Figaro::Rails::Railtie</code> which inherits from base class <code>::Rails::Railtie</code>.  Railtie allows non-rails code to <a href="http://edgeapi.rubyonrails.org/classes/Rails/Railtie.html">interact with the Rails frameworks during or after boot</a>. In this case, the <code>config</code> method returns the instance of <code>Railtie::Configuration</code> that belongs to the application being initialized.  Specifically <code>config</code> has a method called <code>before_configuration</code>.  This method&#39;s block is the first configurable block to run, and is called before any initializers are run.  So essentially <code>Figaro.load</code> is called as early as possible during rails startup.  It runs before the application configuration block inside <code>application.rb</code> is run.</p>
+
+<p><code>Figaro.load</code> then kicks off a chain of calls in <code>lib/figaro.rb</code>.  Eventually, we end up with an instance of <code>Figaro::Rails::Application</code>. The method <code>load</code> is then invoked to load the <code>&lt;rails root&gt;/config/application.yml</code> file.</p>
+
+
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+
+  <footer>
+    
+
+  </footer>
+
+
+
+
+  <script>    'use strict';    yepnope([          {        load: 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',        complete: function () {          if ( !window.jQuery ) {            yepnope('http://serixscorpio.github.io/assets/jquery/dist/jquery-fc13c39852cdf78bcdc4828979ea36d2.js');          }        }      },          'http://serixscorpio.github.io/assets/app-c98f6bcc94867897539baf456375fdab.js'    ]);              </script>
+</body>
+</html>
